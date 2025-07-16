@@ -79,3 +79,5 @@ export function TradingViewChart({ symbol, onClose }: TradingViewChartProps) {
     </div>
   );
 }
+  )
+}
