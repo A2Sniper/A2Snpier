@@ -6,12 +6,17 @@ import { TrendingUp, Zap, Shield, Target, Users, Star, Check, ArrowRight, Play, 
 import { pricingPlans } from '@/lib/mock-data';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { AuthModal } from '@/components/ui/auth-modal';
+import { CandlestickAnimation } from '@/components/ui/candlestick-animation';
+import { useAppStore } from '@/lib/store';
 
 export default function HomePage() {
   const router = useRouter();
+  const { setUser, setAuthenticated } = useAppStore();
   const [selectedPlan, setSelectedPlan] = useState(1);
   const [showDemo, setShowDemo] = useState(false);
   const [email, setEmail] = useState('');
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const features = [
     {
@@ -41,7 +46,7 @@ export default function HomePage() {
       name: "Marc Dubois",
       role: "Trader Professionnel",
       avatar: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=150",
-      content: "J'ai doublé mon capital en 3 mois avec TradeAlgo. Les signaux sont d'une précision remarquable.",
+      content: "J'ai doublé mon capital en 3 mois avec A2Sniper. Les signaux sont d'une précision remarquable.",
       rating: 5
     },
     {
@@ -77,7 +82,6 @@ export default function HomePage() {
   const handleSubscribeNewsletter = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (email.trim()) {
-      // Simulation d'inscription newsletter
       const notification = document.createElement('div');
       notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
       notification.textContent = `Merci ${email} ! Vous êtes maintenant inscrit à notre newsletter.`;
@@ -92,10 +96,17 @@ export default function HomePage() {
     router.push(`/pricing?plan=${planIndex}`);
   }, [router]);
 
+  const handleAuth = (user: any) => {
+    setUser(user);
+    setAuthenticated(true);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
+    <div className="min-h-screen bg-background text-foreground relative">
+      <CandlestickAnimation />
+      
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
+      <header className="bg-card shadow-sm sticky top-0 z-40 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
@@ -103,14 +114,20 @@ export default function HomePage() {
                 <TrendingUp className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">TradeAlgo</h1>
-                <p className="text-xs text-blue-600">AI Trading Platform</p>
+                <h1 className="text-xl font-bold text-foreground">A2Sniper</h1>
+                <p className="text-xs text-blue-400">AI Trading Platform</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Connexion
+              </button>
               <Link 
                 href="/dashboard" 
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all"
               >
                 Dashboard
               </Link>
@@ -128,31 +145,31 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+              <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
                 Trading Algorithmique
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
                   Propulsé par l'IA
                 </span>
               </h1>
-              <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
                 Générez des profits constants avec nos signaux de trading alimentés par l'intelligence artificielle. 
                 90% de précision, signaux temps réel, communauté VIP.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link 
-                  href="/dashboard" 
+                <button
+                  onClick={() => setShowAuthModal(true)}
                   className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg"
                 >
                   Commencer maintenant
-                </Link>
+                </button>
                 <button 
                   onClick={handleStartDemo}
                   disabled={showDemo}
-                  className="border-2 border-blue-500 text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-all flex items-center space-x-2 disabled:opacity-50"
+                  className="border-2 border-blue-500 text-blue-400 px-8 py-4 rounded-lg font-semibold hover:bg-blue-500 hover:text-white transition-all flex items-center space-x-2 disabled:opacity-50"
                 >
                   {showDemo ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
                       <span>Chargement...</span>
                     </>
                   ) : (
@@ -166,18 +183,10 @@ export default function HomePage() {
             </motion.div>
           </div>
         </div>
-        
-        {/* Background elements */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-full">
-            <div className="w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse absolute top-20 left-1/4"></div>
-            <div className="w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse absolute top-40 right-1/4"></div>
-          </div>
-        </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 bg-white">
+      <section className="py-12 bg-card border-y border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -188,8 +197,8 @@ export default function HomePage() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-3xl font-bold text-blue-600 mb-2">{stat.value}</div>
-                <div className="text-gray-600">{stat.label}</div>
+                <div className="text-3xl font-bold text-blue-400 mb-2">{stat.value}</div>
+                <div className="text-muted-foreground">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -197,13 +206,13 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-50 to-purple-50">
+      <section className="py-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Pourquoi choisir TradeAlgo ?
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Pourquoi choisir A2Sniper ?
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Une plateforme complète pour optimiser vos trades avec l'intelligence artificielle
             </p>
           </div>
@@ -215,13 +224,13 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                className="card-dark p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
               >
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white mb-4">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -229,13 +238,13 @@ export default function HomePage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Choisissez votre plan
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Des plans adaptés à tous les niveaux de trading
             </p>
           </div>
@@ -247,8 +256,8 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`relative bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all ${
-                  plan.popular ? 'border-2 border-blue-500 scale-105' : 'border border-gray-200'
+                className={`relative card-dark p-8 rounded-xl shadow-lg hover:shadow-xl transition-all ${
+                  plan.popular ? 'border-2 border-blue-500 scale-105' : 'border border-border'
                 }`}
               >
                 {plan.popular && (
@@ -260,18 +269,18 @@ export default function HomePage() {
                 )}
                 
                 <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                  <div className="text-4xl font-bold text-gray-900 mb-1">
+                  <h3 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
+                  <div className="text-4xl font-bold text-foreground mb-1">
                     ${plan.price}
-                    <span className="text-lg font-normal text-gray-600">/mois</span>
+                    <span className="text-lg font-normal text-muted-foreground">/mois</span>
                   </div>
                 </div>
                 
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-center space-x-3">
-                      <Check className="w-5 h-5 text-green-500" />
-                      <span className="text-gray-600">{feature}</span>
+                      <Check className="w-5 h-5 text-green-400" />
+                      <span className="text-muted-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -281,7 +290,7 @@ export default function HomePage() {
                   className={`w-full py-3 rounded-lg font-semibold transition-all ${
                     plan.popular
                       ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                   }`}
                 >
                   Choisir ce plan
@@ -293,13 +302,13 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-50 to-purple-50">
+      <section className="py-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Ce que disent nos traders
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Plus de 10,000 traders nous font confiance
             </p>
           </div>
@@ -311,14 +320,14 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white p-6 rounded-xl shadow-lg"
+                className="card-dark p-6 rounded-xl shadow-lg"
               >
                 <div className="flex items-center space-x-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-gray-600 mb-4 italic">"{testimonial.content}"</p>
+                <p className="text-muted-foreground mb-4 italic">"{testimonial.content}"</p>
                 <div className="flex items-center space-x-3">
                   <img 
                     src={testimonial.avatar} 
@@ -326,8 +335,8 @@ export default function HomePage() {
                     className="w-10 h-10 rounded-full"
                   />
                   <div>
-                    <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+                    <p className="font-semibold text-foreground">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                   </div>
                 </div>
               </motion.div>
@@ -348,16 +357,16 @@ export default function HomePage() {
               Prêt à révolutionner votre trading ?
             </h2>
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Rejoignez des milliers de traders qui génèrent des profits constants avec TradeAlgo
+              Rejoignez des milliers de traders qui génèrent des profits constants avec A2Sniper
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link 
-                href="/dashboard" 
+              <button
+                onClick={() => setShowAuthModal(true)}
                 className="inline-flex items-center space-x-2 bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-lg"
               >
                 <span>Commencer maintenant</span>
                 <ArrowRight className="w-5 h-5" />
-              </Link>
+              </button>
               <Link 
                 href="/telegram" 
                 className="inline-flex items-center space-x-2 bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-all"
@@ -371,19 +380,19 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-card text-foreground py-12 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Newsletter */}
           <div className="mb-12 text-center">
             <h3 className="text-2xl font-bold mb-4">Restez informé</h3>
-            <p className="text-gray-400 mb-6">Recevez nos dernières analyses et signaux directement dans votre boîte mail</p>
+            <p className="text-muted-foreground mb-6">Recevez nos dernières analyses et signaux directement dans votre boîte mail</p>
             <form onSubmit={handleSubscribeNewsletter} className="max-w-md mx-auto flex gap-3">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Votre email"
-                className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-4 py-3 rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
               <button
@@ -401,48 +410,54 @@ export default function HomePage() {
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold">TradeAlgo</span>
+                <span className="text-xl font-bold">A2Sniper</span>
               </div>
-              <p className="text-gray-400">
+              <p className="text-muted-foreground">
                 Plateforme de trading algorithmique propulsée par l'IA
               </p>
             </div>
             
             <div>
               <h3 className="text-lg font-semibold mb-4">Produit</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link></li>
-                <li><Link href="/signals" className="hover:text-white transition-colors">Signaux</Link></li>
-                <li><Link href="/performance" className="hover:text-white transition-colors">Performance</Link></li>
-                <li><Link href="/analytics" className="hover:text-white transition-colors">Analytics</Link></li>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><Link href="/dashboard" className="hover:text-foreground transition-colors">Dashboard</Link></li>
+                <li><Link href="/signals" className="hover:text-foreground transition-colors">Signaux</Link></li>
+                <li><Link href="/performance" className="hover:text-foreground transition-colors">Performance</Link></li>
+                <li><Link href="/analytics" className="hover:text-foreground transition-colors">Analytics</Link></li>
               </ul>
             </div>
             
             <div>
               <h3 className="text-lg font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="mailto:support@tradealgo.ai" className="hover:text-white transition-colors">Documentation</a></li>
-                <li><Link href="/telegram" className="hover:text-white transition-colors">Bot Telegram</Link></li>
-                <li><a href="mailto:support@tradealgo.ai" className="hover:text-white transition-colors">Contact</a></li>
-                <li><Link href="/telegram" className="hover:text-white transition-colors">Communauté</Link></li>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><a href="mailto:support@a2sniper.ai" className="hover:text-foreground transition-colors">Documentation</a></li>
+                <li><Link href="/telegram" className="hover:text-foreground transition-colors">Bot Telegram</Link></li>
+                <li><a href="mailto:support@a2sniper.ai" className="hover:text-foreground transition-colors">Contact</a></li>
+                <li><Link href="/telegram" className="hover:text-foreground transition-colors">Communauté</Link></li>
               </ul>
             </div>
             
             <div>
               <h3 className="text-lg font-semibold mb-4">Légal</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Conditions</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Confidentialité</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Avertissement risques</a></li>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><a href="#" className="hover:text-foreground transition-colors">Conditions</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Confidentialité</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Avertissement risques</a></li>
               </ul>
             </div>
           </div>
           
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 TradeAlgo. Tous droits réservés.</p>
+          <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
+            <p>&copy; 2024 A2Sniper. Tous droits réservés.</p>
           </div>
         </div>
       </footer>
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onAuth={handleAuth}
+      />
     </div>
   );
 }
