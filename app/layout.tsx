@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'TradeAlgo - Plateforme de Trading Algorithmique',
+  title: 'A2Sniper - Plateforme de Trading Algorithmique',
   description: 'Plateforme de trading algorithmique propulsée par l\'IA. Générez des signaux de trading précis avec 90% de taux de réussite.',
 };
 
@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className={inter.className}>
+      <body className={`${inter.className} dark`}>
         {children}
       </body>
     </html>
