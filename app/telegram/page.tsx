@@ -38,7 +38,7 @@ export default function TelegramPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navigation />
       
       <div className="md:pl-64">
@@ -50,10 +50,10 @@ export default function TelegramPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                 Bot Telegram TradeAlgo.AI
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Interface principale pour recevoir vos signaux de trading en temps réel
               </p>
             </motion.div>
