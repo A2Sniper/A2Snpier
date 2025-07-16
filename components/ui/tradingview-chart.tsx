@@ -67,12 +67,12 @@ export function TradingViewChart({ symbol, onClose }: TradingViewChartProps) {
             <X className="w-5 h-5 text-gray-400" />
           </button>
         </div>
-        
+        <div className="w-full h-full">
         <div className="p-4 h-full">
           <div 
             ref={containerRef}
             className="tradingview-widget-container h-full"
-            id="tradingview_chart"
+            style={{ height: '100%', width: '100%' }}
           />
         </div>
       </div>

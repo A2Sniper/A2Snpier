@@ -1,15 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Link2, Clock, TrendingUp, TrendingDown, MessageCircle, X, RefreshCw, Download, Settings, BarChart3, Target, DollarSign } from 'lucide-react';
+import { Bell, Link2, Clock, TrendingUp, TrendingDown, MessageCircle, X, RefreshCw, Download, Settings, BarChart3, Target, DollarSign, Calculator } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { CandlestickAnimation } from '@/components/ui/candlestick-animation';
+import { TradeCalculator } from '@/components/ui/trade-calculator';
 
 export default function DashboardPage() {
   const { user, signals, addSignal } = useAppStore();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showChat, setShowChat] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
   const [gaugeValue, setGaugeValue] = useState(75);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [liveMetrics, setLiveMetrics] = useState({
@@ -272,6 +274,12 @@ export default function DashboardPage() {
             >
               <Settings className="w-5 h-5" />
             </button>
+            <button 
+              onClick={() => setShowCalculator(true)}
+              className="p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              <Calculator className="w-5 h-5" />
+            </button>
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full"></div>
           </div>
         </div>
@@ -512,6 +520,12 @@ export default function DashboardPage() {
           <MessageCircle className="w-6 h-6 text-white" />
         </motion.button>
       )}
+      
+      {/* Trade Calculator */}
+      <TradeCalculator
+        isOpen={showCalculator}
+        onClose={() => setShowCalculator(false)}
+      />
     </div>
   );
 }

@@ -27,6 +27,7 @@ export function Navigation() {
     { name: 'Signaux', href: '/signals', icon: Target },
     { name: 'Performance', href: '/performance', icon: TrendingUp },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+    { name: 'Forex & Deriv', href: '/forex-deriv', icon: DollarSign },
     { name: 'Backtesting', href: '/backtesting', icon: Target },
     { name: 'Courtiers', href: '/brokers', icon: Users },
     { name: 'Telegram', href: '/telegram', icon: Users },

@@ -63,7 +63,7 @@ export default function PerformancePage() {
     URL.revokeObjectURL(url);
   };
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navigation />
       
       <div className="md:pl-64">
@@ -77,10 +77,10 @@ export default function PerformancePage() {
               className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
             >
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                   Analyse de Performance
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-400">
                   Analyse détaillée de vos résultats de trading
                 </p>
               </div>

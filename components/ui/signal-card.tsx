@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Clock, Target, BarChart3 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock, Target, BarChart3, Copy, Check } from 'lucide-react';
 import { Signal } from '@/lib/mock-data';
 import { TradingViewChart } from './tradingview-chart';
 
@@ -12,6 +12,56 @@ interface SignalCardProps {
 
 export function SignalCard({ signal }: SignalCardProps) {
   const [showChart, setShowChart] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<string>('');
+
+  // Calculer le temps restant
+  useEffect(() => {
+    const updateTimeRemaining = () => {
+      if (signal.status !== 'ACTIVE') {
+        setTimeRemaining('');
+        return;
+      }
+
+      const now = new Date().getTime();
+      const signalTime = new Date(signal.timestamp).getTime();
+      const expirationTime = signalTime + (signal.expiration * 60 * 1000);
+      const remaining = expirationTime - now;
+
+      if (remaining <= 0) {
+        setTimeRemaining('Expiré');
+        return;
+      }
+
+      const minutes = Math.floor(remaining / (1000 * 60));
+      const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+      setTimeRemaining(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+    };
+
+    updateTimeRemaining();
+    const interval = setInterval(updateTimeRemaining, 1000);
+
+    return () => clearInterval(interval);
+  }, [signal.timestamp, signal.expiration, signal.status]);
+
+  const handleCopy = async () => {
+    const signalText = `
+🎯 SIGNAL A2Sniper
+Paire: ${signal.pair}
+Direction: ${signal.direction}
+Confiance: ${signal.confidence}%
+Expiration: ${signal.expiration}min
+Prix d'entrée: ${signal.entry_price}
+    `.trim();
+
+    try {
+      await navigator.clipboard.writeText(signalText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Erreur lors de la copie:', err);
+    }
+  };
 
   const getStatusColor = (status: Signal['status']) => {
     switch (status) {
@@ -71,15 +121,20 @@ export function SignalCard({ signal }: SignalCardProps) {
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white ${getStatusColor(signal.status)}`}>
               {getStatusText(signal.status)}
             </span>
-            
-            <button
-              onClick={() => setShowChart(true)}
-              className="chart-button p-2 rounded-lg text-white smooth-transition"
-              title="Voir le graphique"
-            >
-              <BarChart3 className="w-4 h-4" />
-            </button>
           </div>
+        </div>
+
+        {signal.status === 'ACTIVE' && timeRemaining && (
+          <div className="flex items-center space-x-2 text-sm">
+            <Clock className="w-4 h-4 text-yellow-400" />
+            <span className="text-yellow-400 font-mono">
+              {timeRemaining}
+            </span>
+          </div>
+        )}
+        
+        <div className="text-xs text-muted-foreground">
+          {new Date(signal.timestamp).toLocaleString('fr-FR')}
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
@@ -131,6 +186,41 @@ export function SignalCard({ signal }: SignalCardProps) {
           )}
         </div>
 
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="text-sm text-muted-foreground">
+              Expiration: {signal.expiration}min
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setShowChart(true)}
+              className="flex items-center space-x-2 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
+            >
+              <BarChart3 className="w-4 h-4" />
+              <span>Graphique</span>
+            </button>
+            
+            <button
+              onClick={handleCopy}
+              className="flex items-center space-x-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>Copié!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  <span>Copier</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
         <div className="mt-4 pt-4 border-t border-slate-600">
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500">Direction: {signal.direction}</span>
@@ -139,6 +229,7 @@ export function SignalCard({ signal }: SignalCardProps) {
         </div>
       </motion.div>
 
+      {/* Modal TradingView */}
       {showChart && (
         <TradingViewChart
           symbol={signal.pair}
