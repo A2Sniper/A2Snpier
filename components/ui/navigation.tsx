@@ -11,7 +11,8 @@ import {
   DollarSign,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Home
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,20 +21,30 @@ import { useAppStore } from '@/lib/store';
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { user, setUser, setAuthenticated } = useAppStore();
+  const { user, setUser, setAuthenticated, isAuthenticated } = useAppStore();
 
   const navigationItems = [
-    { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-    { name: 'Signaux', href: '/signals', icon: Target },
-    { name: 'Performance', href: '/performance', icon: TrendingUp },
-    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-    { name: 'Forex & Deriv', href: '/forex-deriv', icon: DollarSign },
-    { name: 'Backtesting', href: '/backtesting', icon: Target },
-    { name: 'Courtiers', href: '/brokers', icon: Users },
-    { name: 'Telegram', href: '/telegram', icon: Users },
-    { name: 'Tarifs', href: '/pricing', icon: DollarSign },
-    { name: 'Paramètres', href: '/settings', icon: Settings },
+    {
+      name: 'Accueil',
+      href: '/',
+      icon: Home,
+      requiresAuth: false
+    },
+    { name: 'Dashboard', href: '/dashboard', icon: BarChart3, requiresAuth: true },
+    { name: 'Signaux', href: '/signals', icon: Target, requiresAuth: false },
+    { name: 'Performance', href: '/performance', icon: TrendingUp, requiresAuth: false },
+    { name: 'Analytics', href: '/analytics', icon: BarChart3, requiresAuth: false },
+    { name: 'Forex & Deriv', href: '/forex-deriv', icon: DollarSign, requiresAuth: false },
+    { name: 'Backtesting', href: '/backtesting', icon: Target, requiresAuth: false },
+    { name: 'Courtiers', href: '/brokers', icon: Users, requiresAuth: false },
+    { name: 'Telegram', href: '/telegram', icon: Users, requiresAuth: false },
+    { name: 'Tarifs', href: '/pricing', icon: DollarSign, requiresAuth: false },
+    { name: 'Paramètres', href: '/settings', icon: Settings, requiresAuth: false },
   ];
+
+  const filteredItems = navigationItems.filter(item => 
+    !item.requiresAuth || (item.requiresAuth && isAuthenticated)
+  );
 
   const handleLogout = () => {
     setUser(null);
@@ -60,7 +71,7 @@ export function Navigation() {
           
           <div className="mt-5 flex-grow flex flex-col">
             <nav className="flex-1 px-2 pb-4 space-y-1">
-              {navigationItems.map((item) => {
+              {filteredItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link
@@ -144,7 +155,7 @@ export function Navigation() {
             className="md:hidden bg-card border-b border-border"
           >
             <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigationItems.map((item) => {
+              {filteredItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link
