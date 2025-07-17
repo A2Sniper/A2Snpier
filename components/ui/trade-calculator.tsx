@@ -1,8 +1,1 @@
-  return null;
-  
-  }
-    onClose();
-    window.location.href = '/calculator';
-  if (isOpen) {
-  // Redirect to calculator page instead of showing modal
-export function TradeCalculator({ isOpen, onClose }: TradeCalculatorProps) {
+  {"code":"rate-limited","message":"You have hit the rate limit. Please upgrade to keep chatting.","providerLimitHit":false,"isRetryable":true}
