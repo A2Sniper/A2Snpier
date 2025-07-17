@@ -367,9 +367,17 @@ export default function DashboardPage() {
             <div className="card-dark rounded-xl p-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-blue-400" />
+                  <div className="flex items-center space-x-1">
+                    <TrendingUp className="w-4 h-4 text-blue-400" />
+                    {gaugeValue >= 85 && <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />}
+                  </div>
                 </div>
-                <h2 className="text-xl font-semibold text-foreground">Analyse Technique Temps Réel</h2>
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground">Analyse WVRS + IA</h2>
+                  {gaugeValue >= 85 && (
+                    <p className="text-xs text-yellow-400">🎯 Stratégie mèche institutionnelle active</p>
+                  )}
+                </div>
               </div>
               
               <div className="flex justify-center">
@@ -385,7 +393,7 @@ export default function DashboardPage() {
                   <div className="text-2xl font-bold text-foreground mb-2">EUR/USD</div>
                   <div className="text-muted-foreground text-sm mb-4">Position</div>
                   <div className="text-lg text-blue-400">
-                    {gaugeValue > 60 ? 'Haussière' : 'Baissière'}
+                    {gaugeValue >= 85 ? 'Mèche Institutionnelle' : gaugeValue > 60 ? 'Haussière' : 'Baissière'}
                   </div>
                 </div>
                 <div>

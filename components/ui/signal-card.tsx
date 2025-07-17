@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Clock, Target, BarChart3, Copy, Check } from 'lucide-react';
+import { Copy, TrendingUp, TrendingDown, Clock, BarChart3, CheckCircle, Zap } from 'lucide-react';
+import { WVRSIndicator } from './wvrs-indicator';
 import { Signal } from '@/lib/mock-data';
 import { TradingViewChart } from './tradingview-chart';
 
@@ -133,6 +134,20 @@ Prix d'entrée: ${signal.entry_price}
           </div>
         )}
         
+        {/* WVRS Indicator si applicable */}
+        {signal.confidence >= 90 && (
+          <WVRSIndicator 
+            signal={{
+              confidence: signal.confidence,
+              wick_percentage: 65 + Math.random() * 20, // Simulation
+              volume_ratio: 1.5 + Math.random() * 1.5, // Simulation
+              context_zone: ['SUPPORT', 'RESISTANCE', 'EMA'][Math.floor(Math.random() * 3)],
+              direction: signal.direction
+            }}
+            className="mb-4"
+          />
+        )}
+        
         <div className="text-xs text-muted-foreground">
           {new Date(signal.timestamp).toLocaleString('fr-FR')}
         </div>
@@ -188,6 +203,12 @@ Prix d'entrée: ${signal.entry_price}
 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
+            {signal.confidence >= 90 && (
+              <div className="flex items-center space-x-1 text-yellow-400">
+                <Zap className="w-3 h-3" />
+                <span className="text-xs font-bold">WVRS</span>
+              </div>
+            )}
             <div className="text-sm text-muted-foreground">
               Expiration: {signal.expiration}min
             </div>

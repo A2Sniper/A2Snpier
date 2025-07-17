@@ -1,4 +1,5 @@
 import { TechnicalIndicators, MarketData, TechnicalAnalysis } from './technical-indicators';
+import WVRSAnalyzer, { WVRSSignal, CandleData } from './wvrs-strategy';
 
 export interface MLFeatures {
   price_change_1m: number;
@@ -43,11 +44,24 @@ export interface AISignal {
 
 export class AITradingEngine {
   private readonly confidenceThreshold = 75;
+  private wvrsAnalyzer: WVRSAnalyzer;
   private readonly riskLevels = {
     LOW: { maxRisk: 0.02, minConfidence: 85 },
     MEDIUM: { maxRisk: 0.05, minConfidence: 75 },
     HIGH: { maxRisk: 0.10, minConfidence: 65 }
   };
+
+  constructor() {
+    this.wvrsAnalyzer = new WVRSAnalyzer({
+      min_wick_percentage: 60,
+      min_volume_multiplier: 1.5,
+      volume_sma_period: 10,
+      binary_options: {
+        enabled: true,
+        expiration_candles: 2
+      }
+    });
+  }
 
   // Nouvelles méthodes pour conformité au document
   
@@ -350,8 +364,24 @@ export class AITradingEngine {
   }
 
   // Génération des raisons du signal
-  private generateReasoning(technicals: TechnicalIndicators, features: MLFeatures, direction: 'CALL' | 'PUT'): string[] {
+  private generateReasoning(
+    technicals: TechnicalIndicators, 
+    features: MLFeatures, 
+    direction: 'CALL' | 'PUT',
+    wvrsSignal?: WVRSSignal | null
+  ): string[] {
     const reasons: string[] = [];
+    
+    // Raisons WVRS en priorité
+    if (wvrsSignal) {
+      reasons.push('🎯 WVRS Strategy - Signal institutionnel détecté');
+      reasons.push(`🕯️ Mèche ${wvrsSignal.wick_percentage.toFixed(1)}% - Rejet de zone`);
+      reasons.push(`📊 Volume ${wvrsSignal.volume_ratio.toFixed(2)}x - Intervention majeure`);
+      if (wvrsSignal.context_zone) {
+        reasons.push(`🎯 Zone ${wvrsSignal.context_zone} - Contexte favorable`);
+      }
+      return reasons;
+    }
     
     // Analyse RSI
     if (technicals.rsi < 30) {
@@ -386,53 +416,83 @@ export class AITradingEngine {
     return reasons;
   }
 
-  // Génération d'un signal AI complet
+  // Génération d'un signal AI complet avec WVRS
   async generateSignal(pair: string, marketData: MarketData[]): Promise<AISignal | null> {
     try {
+      // 1. Analyser avec la stratégie WVRS d'abord
+      const wvrsSignal = await this.analyzeWithWVRS(marketData);
+      
       // Extraction des features et indicateurs
       const mlFeatures = this.extractMLFeatures(marketData);
       const technicals = TechnicalAnalysis.analyzeMarket(marketData);
+      
+      // Si WVRS détecte un signal fort, l'utiliser comme base
+      if (wvrsSignal && wvrsSignal.confidence >= 85) {
+        return this.createAISignalFromWVRS(pair, wvrsSignal, mlFeatures, technicals);
+      }
       
       // Calcul des scores des différents modèles
       const rfScore = this.simulateRandomForest(mlFeatures);
       const xgbScore = this.simulateXGBoost(mlFeatures, technicals);
       const lstmScore = this.simulateLSTM(marketData);
       
+      // Bonus si WVRS détecte des patterns même avec confiance plus faible
+      let wvrsBonus = 0;
+      if (wvrsSignal) {
+        wvrsBonus = (wvrsSignal.confidence / 100) * 0.2; // Bonus jusqu'à 20%
+      }
+      
       // Scores techniques
       const technicalScore = this.calculateTechnicalScore(technicals);
       const volumeScore = Math.min(1, mlFeatures.volume_ratio / 2);
       const trendScore = Math.abs(mlFeatures.trend_strength) * 10;
       
-      // Score final
+      // Score final avec bonus WVRS
       const signalScore = this.calculateFinalScore({
-        base_probability: (rfScore + xgbScore + lstmScore) / 3,
+        base_probability: Math.min(1, (rfScore + xgbScore + lstmScore) / 3 + wvrsBonus),
         technical_score: technicalScore,
         ml_confidence: Math.max(rfScore, xgbScore, lstmScore),
         volume_score: volumeScore,
         trend_score: trendScore
       });
       
+      // Ajuster la confiance si WVRS est présent
+      if (wvrsSignal) {
+        signalScore.final_confidence = Math.min(98, signalScore.final_confidence + 10);
+      }
+      
       // Filtrage par seuil de confiance
       if (signalScore.final_confidence < this.confidenceThreshold) {
         return null;
       }
       
-      // Détermination de la direction
-      const direction: 'CALL' | 'PUT' = signalScore.base_probability > 0.5 ? 'CALL' : 'PUT';
+      // Détermination de la direction (WVRS prioritaire)
+      const direction: 'CALL' | 'PUT' = wvrsSignal ? 
+        (wvrsSignal.direction === 'BUY' ? 'CALL' : 'PUT') :
+        (signalScore.base_probability > 0.5 ? 'CALL' : 'PUT');
       
-      // Calcul des prix cibles
+      // Calcul des prix cibles (WVRS prioritaire)
       const currentPrice = marketData[marketData.length - 1].close;
-      const volatility = mlFeatures.volatility;
-      const targetDistance = volatility * 2;
-      const stopDistance = volatility * 1.5;
       
-      const targetPrice = direction === 'CALL' ? 
-        currentPrice * (1 + targetDistance) : 
-        currentPrice * (1 - targetDistance);
+      let targetPrice: number;
+      let stopLoss: number;
       
-      const stopLoss = direction === 'CALL' ? 
-        currentPrice * (1 - stopDistance) : 
-        currentPrice * (1 + stopDistance);
+      if (wvrsSignal) {
+        targetPrice = wvrsSignal.take_profit_1;
+        stopLoss = wvrsSignal.stop_loss;
+      } else {
+        const volatility = mlFeatures.volatility;
+        const targetDistance = volatility * 2;
+        const stopDistance = volatility * 1.5;
+        
+        targetPrice = direction === 'CALL' ? 
+          currentPrice * (1 + targetDistance) : 
+          currentPrice * (1 - targetDistance);
+        
+        stopLoss = direction === 'CALL' ? 
+          currentPrice * (1 - stopDistance) : 
+          currentPrice * (1 + stopDistance);
+      }
       
       // Génération du signal
       const signal: AISignal = {
@@ -448,7 +508,7 @@ export class AITradingEngine {
         ml_features: mlFeatures,
         signal_score: signalScore,
         timestamp: new Date(),
-        reasoning: this.generateReasoning(technicals, mlFeatures, direction)
+        reasoning: this.generateReasoning(technicals, mlFeatures, direction, wvrsSignal)
       };
       
       return signal;
@@ -456,6 +516,66 @@ export class AITradingEngine {
       console.error('Erreur lors de la génération du signal:', error);
       return null;
     }
+  }
+
+  // Analyse avec la stratégie WVRS
+  private async analyzeWithWVRS(marketData: MarketData[]): Promise<WVRSSignal | null> {
+    // Convertir MarketData en CandleData
+    const candleData: CandleData[] = marketData.map(data => ({
+      timestamp: data.timestamp,
+      open: data.open,
+      high: data.high,
+      low: data.low,
+      close: data.close,
+      volume: data.volume
+    }));
+    
+    return this.wvrsAnalyzer.analyzeWVRS(candleData, 'M5');
+  }
+  
+  // Créer un signal AI à partir d'un signal WVRS
+  private createAISignalFromWVRS(
+    pair: string,
+    wvrsSignal: WVRSSignal,
+    mlFeatures: MLFeatures,
+    technicals: TechnicalIndicators
+  ): AISignal {
+    const direction: 'CALL' | 'PUT' = wvrsSignal.direction === 'BUY' ? 'CALL' : 'PUT';
+    
+    // Score basé sur WVRS
+    const signalScore = {
+      base_probability: wvrsSignal.confidence / 100,
+      technical_score: 0.9, // WVRS est technique
+      ml_confidence: wvrsSignal.confidence / 100,
+      volume_score: Math.min(1, wvrsSignal.volume_ratio / 2),
+      trend_score: 0.8,
+      final_confidence: wvrsSignal.confidence,
+      risk_level: wvrsSignal.confidence >= 90 ? 'LOW' as const : 
+                  wvrsSignal.confidence >= 80 ? 'MEDIUM' as const : 'HIGH' as const
+    };
+    
+    return {
+      id: wvrsSignal.id,
+      pair,
+      direction,
+      confidence: Math.round(wvrsSignal.confidence),
+      entry_price: wvrsSignal.entry_price,
+      target_price: wvrsSignal.take_profit_1,
+      stop_loss: wvrsSignal.stop_loss,
+      expiration: wvrsSignal.expiration_minutes,
+      technical_indicators: technicals,
+      ml_features: mlFeatures,
+      signal_score: signalScore,
+      timestamp: wvrsSignal.timestamp,
+      reasoning: [
+        '🎯 WVRS Strategy - Mèche institutionnelle détectée',
+        ...wvrsSignal.reasoning,
+        `📊 Confiance WVRS: ${wvrsSignal.confidence}%`,
+        `🕯️ Mèche: ${wvrsSignal.wick_percentage.toFixed(1)}%`,
+        `📈 Volume: ${wvrsSignal.volume_ratio.toFixed(2)}x`,
+        wvrsSignal.context_zone ? `🎯 Zone: ${wvrsSignal.context_zone}` : ''
+      ].filter(Boolean)
+    };
   }
 
   // Calcul du score technique
