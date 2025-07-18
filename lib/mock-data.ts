@@ -31,31 +31,31 @@ export const mockSignals: Signal[] = [
     id: '1',
     pair: 'EUR/USD',
     direction: 'CALL',
-    confidence: 94, // Amélioré avec WVRS
+    confidence: 96, // Signal WVRS détecté
     entry_price: 1.0825,
     expiration: 5,
     status: 'WON',
     timestamp: new Date(Date.now() - 300000),
     result_price: 1.0837,
-    profit_loss: 52.80 // Meilleur résultat
+    profit_loss: 68.50 // Excellent résultat WVRS
   },
   {
     id: '2',
     pair: 'GBP/USD',
     direction: 'PUT',
-    confidence: 96, // Signal WVRS
+    confidence: 94, // Signal WVRS confirmé
     entry_price: 1.2456,
     expiration: 3,
     status: 'WON',
     timestamp: new Date(Date.now() - 180000),
     result_price: 1.2441,
-    profit_loss: 48.90
+    profit_loss: 72.30
   },
   {
     id: '3',
     pair: 'USD/JPY',
     direction: 'CALL',
-    confidence: 91, // Confirmé par WVRS
+    confidence: 92, // WVRS + IA combinés
     entry_price: 149.25,
     expiration: 5,
     status: 'ACTIVE',
@@ -65,7 +65,7 @@ export const mockSignals: Signal[] = [
     id: '4',
     pair: 'AUD/USD',
     direction: 'PUT',
-    confidence: 97, // Signal WVRS fort
+    confidence: 95, // Mèche institutionnelle 68%
     entry_price: 0.6789,
     expiration: 4,
     status: 'ACTIVE',
@@ -75,7 +75,7 @@ export const mockSignals: Signal[] = [
     id: '5',
     pair: 'USD/CHF',
     direction: 'CALL',
-    confidence: 88, // Légèrement amélioré
+    confidence: 87, // Signal standard IA
     entry_price: 0.9145,
     expiration: 3,
     status: 'LOST',
@@ -87,32 +87,31 @@ export const mockSignals: Signal[] = [
     id: '6',
     pair: 'EUR/GBP',
     direction: 'PUT',
-    confidence: 95, // Signal WVRS
+    confidence: 93, // WVRS sur résistance
     entry_price: 0.8654,
     expiration: 5,
     status: 'WON',
     timestamp: new Date(Date.now() - 900000),
     result_price: 0.8641,
-    profit_loss: 61.40
+    profit_loss: 58.90
   },
-  // Ajout de signaux supplémentaires pour enrichir les données
   {
     id: '7',
     pair: 'BTC/USD',
     direction: 'CALL',
-    confidence: 93, // Crypto avec WVRS
+    confidence: 91, // Crypto standard
     entry_price: 43250.00,
     expiration: 5,
     status: 'WON',
     timestamp: new Date(Date.now() - 1200000),
     result_price: 43380.00,
-    profit_loss: 78.20
+    profit_loss: 65.80
   },
   {
     id: '8',
     pair: 'ETH/USD',
     direction: 'PUT',
-    confidence: 89,
+    confidence: 88,
     entry_price: 2650.00,
     expiration: 3,
     status: 'LOST',
@@ -124,19 +123,19 @@ export const mockSignals: Signal[] = [
     id: '9',
     pair: 'USD/CAD',
     direction: 'CALL',
-    confidence: 94, // WVRS confirmé
+    confidence: 90, // Signal IA standard
     entry_price: 1.3456,
     expiration: 4,
     status: 'WON',
     timestamp: new Date(Date.now() - 1800000),
     result_price: 1.3478,
-    profit_loss: 49.80
+    profit_loss: 45.20
   },
   {
     id: '10',
     pair: 'NZD/USD',
     direction: 'PUT',
-    confidence: 92, // Nouveau signal WVRS
+    confidence: 97, // Signal WVRS exceptionnel - Mèche 72%
     entry_price: 0.6234,
     expiration: 5,
     status: 'ACTIVE',
@@ -156,10 +155,10 @@ export const mockPerformanceData: PerformanceData[] = [
 
 export const mockUserStats: UserStats = {
   totalTrades: 1247,
-  winRate: 94.2, // Amélioré avec WVRS
-  totalProfit: 3420, // Meilleurs profits
-  todaySignals: 52, // Plus de signaux de qualité
-  performance: 18.7 // Performance améliorée
+  winRate: 96.8, // Considérablement amélioré avec WVRS
+  totalProfit: 4280, // Profits exceptionnels
+  todaySignals: 47, // Signaux de très haute qualité
+  performance: 24.3 // Performance exceptionnelle
 };
 
 export const tradingPairs = [

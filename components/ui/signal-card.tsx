@@ -98,20 +98,23 @@ Prix d'entrée: ${signal.entry_price}
     <>
       <motion.div
         whileHover={{ scale: 1.02 }}
-        className="card-dark rounded-xl p-6 shadow-lg hover:shadow-xl smooth-transition"
+        className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500/50 transition-all shadow-lg"
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
+            {signal.confidence >= 90 && (
+              <div className="flex items-center space-x-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                <Zap className="w-3 h-3" />
+                <span>WVRS</span>
+              </div>
+            )}
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              signal.direction === 'CALL' ? 'bg-green-500' : 'bg-red-500'
+              signal.direction === 'CALL' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
             }`}>
-              {signal.direction === 'CALL' ? 
-                <TrendingUp className="w-5 h-5 text-white" /> : 
-                <TrendingDown className="w-5 h-5 text-white" />
-              }
+              {signal.direction === 'CALL' ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white">{signal.pair}</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{signal.pair}</h3>
               <p className="text-sm text-gray-400">
                 {signal.timestamp.toLocaleTimeString('fr-FR')}
               </p>

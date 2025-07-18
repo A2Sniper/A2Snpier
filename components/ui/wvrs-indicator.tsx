@@ -1,93 +1,88 @@
-import React from 'react';
+'use client';
+
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Volume2, Target, Zap } from 'lucide-react';
+import { Zap, TrendingUp, Volume2, Target } from 'lucide-react';
 
 interface WVRSIndicatorProps {
-  signal: {
-    confidence: number;
-    wick_percentage?: number;
-    volume_ratio?: number;
-    context_zone?: string;
-    direction: 'CALL' | 'PUT';
-  };
-  className?: string;
+  confidence: number;
+  wickPercentage: number;
+  volumeRatio: number;
+  contextZone?: string;
+  direction: 'BUY' | 'SELL';
 }
 
-export const WVRSIndicator: React.FC<WVRSIndicatorProps> = ({ signal, className = '' }) => {
-  const isWVRSSignal = signal.wick_percentage && signal.volume_ratio;
-  
-  if (!isWVRSSignal) return null;
-
-  const getWVRSStrength = (confidence: number) => {
-    if (confidence >= 95) return { label: 'TRÈS FORT', color: 'text-green-400', bg: 'bg-green-500/20' };
-    if (confidence >= 90) return { label: 'FORT', color: 'text-blue-400', bg: 'bg-blue-500/20' };
-    if (confidence >= 85) return { label: 'MODÉRÉ', color: 'text-yellow-400', bg: 'bg-yellow-500/20' };
-    return { label: 'FAIBLE', color: 'text-gray-400', bg: 'bg-gray-500/20' };
-  };
-
-  const strength = getWVRSStrength(signal.confidence);
-  const DirectionIcon = signal.direction === 'CALL' ? TrendingUp : TrendingDown;
-  const directionColor = signal.direction === 'CALL' ? 'text-green-400' : 'text-red-400';
+export function WVRSIndicator({ 
+  confidence, 
+  wickPercentage, 
+  volumeRatio, 
+  contextZone, 
+  direction 
+}: WVRSIndicatorProps) {
+  if (confidence < 90) return null;
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      className={`${strength.bg} border border-gray-600 rounded-lg p-3 ${className}`}
+      transition={{ duration: 0.5 }}
+      className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4 rounded-xl shadow-lg border-2 border-green-400"
     >
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center space-x-2">
-          <Zap className="w-4 h-4 text-yellow-400" />
-          <span className="text-xs font-bold text-yellow-400">WVRS</span>
+      <div className="flex items-center space-x-2 mb-3">
+        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+          <Zap className="w-5 h-5 text-yellow-300" />
         </div>
-        <div className={`flex items-center space-x-1 ${strength.color}`}>
-          <DirectionIcon className="w-4 h-4" />
-          <span className="text-xs font-bold">{strength.label}</span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-2 text-xs">
-        <div className="text-center">
-          <div className="flex items-center justify-center space-x-1 mb-1">
-            <Target className="w-3 h-3 text-blue-400" />
-            <span className="text-gray-400">Mèche</span>
-          </div>
-          <div className={strength.color}>
-            {signal.wick_percentage?.toFixed(1)}%
-          </div>
-        </div>
-
-        <div className="text-center">
-          <div className="flex items-center justify-center space-x-1 mb-1">
-            <Volume2 className="w-3 h-3 text-purple-400" />
-            <span className="text-gray-400">Volume</span>
-          </div>
-          <div className={strength.color}>
-            {signal.volume_ratio?.toFixed(1)}x
-          </div>
-        </div>
-
-        <div className="text-center">
-          <div className="flex items-center justify-center space-x-1 mb-1">
-            <div className="w-3 h-3 rounded-full bg-orange-400" />
-            <span className="text-gray-400">Zone</span>
-          </div>
-          <div className={strength.color}>
-            {signal.context_zone || 'N/A'}
-          </div>
+        <div>
+          <h3 className="font-bold text-lg">WVRS Strategy</h3>
+          <p className="text-green-100 text-sm">Mèche Institutionnelle Détectée</p>
         </div>
       </div>
 
-      <div className="mt-2 pt-2 border-t border-gray-600">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-gray-400">Rejet institutionnel</span>
-          <div className={`px-2 py-1 rounded ${strength.bg} ${strength.color} font-bold`}>
-            {signal.confidence}%
+      <div className="grid grid-cols-2 gap-4 mb-3">
+        <div className="bg-white/10 rounded-lg p-3">
+          <div className="flex items-center space-x-2 mb-1">
+            <TrendingUp className="w-4 h-4" />
+            <span className="text-sm font-medium">Direction</span>
           </div>
+          <div className="text-lg font-bold">{direction}</div>
         </div>
+
+        <div className="bg-white/10 rounded-lg p-3">
+          <div className="flex items-center space-x-2 mb-1">
+            <Target className="w-4 h-4" />
+            <span className="text-sm font-medium">Confiance</span>
+          </div>
+          <div className="text-lg font-bold">{confidence}%</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <div className="flex items-center space-x-1 mb-1">
+            <span>🕯️</span>
+            <span>Mèche</span>
+          </div>
+          <div className="font-medium">{wickPercentage.toFixed(1)}%</div>
+        </div>
+
+        <div>
+          <div className="flex items-center space-x-1 mb-1">
+            <Volume2 className="w-3 h-3" />
+            <span>Volume</span>
+          </div>
+          <div className="font-medium">{volumeRatio.toFixed(2)}x</div>
+        </div>
+      </div>
+
+      {contextZone && (
+        <div className="mt-3 bg-white/10 rounded-lg p-2">
+          <div className="text-xs text-green-100">Zone détectée</div>
+          <div className="font-medium">{contextZone}</div>
+        </div>
+      )}
+
+      <div className="mt-3 text-xs text-green-100">
+        ⚡ Signal institutionnel de haute précision
       </div>
     </motion.div>
   );
-};
-
-export default WVRSIndicator;
+}
