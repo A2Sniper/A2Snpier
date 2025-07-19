@@ -106,7 +106,7 @@ export default function HomePage() {
       <CandlestickAnimation />
       
       {/* Header */}
-      <header className="bg-card shadow-sm sticky top-0 z-40 border-b border-border">
+      <header className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm sticky top-0 z-40 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
@@ -121,7 +121,7 @@ export default function HomePage() {
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
               >
                 Connexion
               </button>
@@ -186,7 +186,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 bg-card border-y border-border">
+      <section className="py-12 bg-muted/50 border-y border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -197,7 +197,7 @@ export default function HomePage() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-3xl font-bold text-blue-400 mb-2">{stat.value}</div>
+                <div className="text-3xl font-bold text-primary mb-2">{stat.value}</div>
                 <div className="text-muted-foreground">{stat.label}</div>
               </motion.div>
             ))}
@@ -206,7 +206,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
+      <section className="py-20 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-900/20 dark:to-purple-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -224,7 +224,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="card-dark p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                className="bg-card text-card-foreground border border-border p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
               >
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white mb-4">
                   {feature.icon}
@@ -238,7 +238,7 @@ export default function HomePage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-card">
+      <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -256,8 +256,8 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`relative card-dark p-8 rounded-xl shadow-lg hover:shadow-xl transition-all ${
-                  plan.popular ? 'border-2 border-blue-500 scale-105' : 'border border-border'
+                className={`relative bg-card text-card-foreground p-8 rounded-xl shadow-lg hover:shadow-xl transition-all ${
+                  plan.popular ? 'border-2 border-primary scale-105' : 'border border-border'
                 }`}
               >
                 {plan.popular && (
@@ -302,7 +302,7 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
+      <section className="py-20 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-900/20 dark:to-purple-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -320,7 +320,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="card-dark p-6 rounded-xl shadow-lg"
+                className="bg-card text-card-foreground border border-border p-6 rounded-xl shadow-lg"
               >
                 <div className="flex items-center space-x-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
@@ -380,7 +380,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-card text-foreground py-12 border-t border-border">
+      <footer className="bg-muted/50 text-foreground py-12 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Newsletter */}
           <div className="mb-12 text-center">
@@ -392,12 +392,12 @@ export default function HomePage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Votre email"
-                className="flex-1 px-4 py-3 rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-4 py-3 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 required
               />
               <button
                 type="submit"
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
               >
                 S'inscrire
               </button>

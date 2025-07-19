@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  TrendingUp, 
+import { TrendingUp, BarChart3, Target, Settings, Users, Menu, X } from 'lucide-react';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
   BarChart3, 
   Target, 
   Settings, 
@@ -55,7 +56,7 @@ export function Navigation() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-background border-r border-border z-30">
         <div className="flex flex-col flex-grow pt-5 bg-card border-r border-border overflow-y-auto">
           <div className="flex items-center flex-shrink-0 px-4">
             <div className="flex items-center space-x-3">
@@ -64,7 +65,7 @@ export function Navigation() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-foreground">A2Sniper</h1>
-                <p className="text-xs text-blue-400">AI Trading Platform</p>
+                <p className="text-xs text-blue-500 dark:text-blue-400">AI Trading Platform</p>
               </div>
             </div>
           </div>
@@ -79,8 +80,8 @@ export function Navigation() {
                     href={item.href}
                     className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                       isActive
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                        ? 'bg-primary/10 text-primary border-r-2 border-primary'
+                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     }`}
                   >
                     <item.icon
@@ -93,6 +94,14 @@ export function Navigation() {
                 );
               })}
             </nav>
+          </div>
+          
+          {/* Theme Toggle */}
+          <div className="flex-shrink-0 px-4 pb-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Thème</span>
+              <ThemeToggle />
+            </div>
           </div>
 
           {/* User Profile */}
@@ -109,8 +118,8 @@ export function Navigation() {
                 <div className="ml-3 flex-1">
                   <p className="text-sm font-medium text-foreground">{user.name}</p>
                   <p className="text-xs text-muted-foreground">{user.email}</p>
-                </div>
-                <button
+                      ? 'bg-primary/10 text-primary border-r-4 border-primary'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                   onClick={handleLogout}
                   className="ml-3 p-1 text-muted-foreground hover:text-foreground"
                 >
@@ -123,13 +132,13 @@ export function Navigation() {
       </div>
 
       {/* Mobile menu button */}
-      <div className="md:hidden">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-background border-b border-border px-4 py-3">
         <div className="flex items-center justify-between p-4 bg-card border-b border-border">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
-            <div>
+            <h1 className="text-xl font-bold text-foreground">A2Sniper</h1>
               <h1 className="text-xl font-bold text-foreground">A2Sniper</h1>
               <p className="text-xs text-blue-400">AI Trading Platform</p>
             </div>
@@ -138,18 +147,21 @@ export function Navigation() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary"
           >
-            {isMobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+          <div className="flex items-center space-x-2">
+            <ThemeToggle />
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+        <div className="md:hidden fixed inset-0 z-30 bg-background">
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             className="md:hidden bg-card border-b border-border"

@@ -206,7 +206,7 @@ export default function DashboardPage() {
       <CandlestickAnimation />
       
       {/* Sidebar */}
-      <div className="fixed left-0 top-0 h-full w-64 bg-card/50 backdrop-blur-xl border-r border-border z-40">
+      <div className="fixed left-0 top-0 h-full w-64 bg-background/95 backdrop-blur-xl border-r border-border z-40">
         <div className="p-6">
           <div className="flex items-center space-x-3 mb-8">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
@@ -221,19 +221,19 @@ export default function DashboardPage() {
             </div>
             <button 
               onClick={() => window.location.href = '/signals'}
-              className="w-full text-left text-muted-foreground px-4 py-3 hover:text-foreground hover:bg-secondary/50 rounded-lg transition-colors"
+              className="w-full text-left text-muted-foreground px-4 py-3 hover:text-foreground hover:bg-accent rounded-lg transition-colors"
             >
               Signaux
             </button>
             <button 
               onClick={() => window.location.href = '/performance'}
-              className="w-full text-left text-muted-foreground px-4 py-3 hover:text-foreground hover:bg-secondary/50 rounded-lg transition-colors"
+              className="w-full text-left text-muted-foreground px-4 py-3 hover:text-foreground hover:bg-accent rounded-lg transition-colors"
             >
               Performance
             </button>
             <button 
               onClick={() => window.location.href = '/analytics'}
-              className="w-full text-left text-muted-foreground px-4 py-3 hover:text-foreground hover:bg-secondary/50 rounded-lg transition-colors"
+              className="w-full text-left text-muted-foreground px-4 py-3 hover:text-foreground hover:bg-accent rounded-lg transition-colors"
             >
               Analytics
             </button>
@@ -258,7 +258,7 @@ export default function DashboardPage() {
             <button 
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="p-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
             </button>
@@ -270,7 +270,7 @@ export default function DashboardPage() {
             </button>
             <button 
               onClick={() => window.location.href = '/settings'}
-              className="p-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className="p-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors"
             >
               <Settings className="w-5 h-5" />
             </button>
@@ -289,14 +289,14 @@ export default function DashboardPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="card-dark rounded-xl p-6"
+            className="bg-card text-card-foreground border border-border rounded-xl p-6"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Total Signaux</p>
                 <p className="text-2xl font-bold text-foreground">{liveMetrics.totalSignals}</p>
               </div>
-              <BarChart3 className="w-8 h-8 text-blue-400" />
+              <BarChart3 className="w-8 h-8 text-primary" />
             </div>
           </motion.div>
 
@@ -304,14 +304,14 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-6"
+            className="bg-card text-card-foreground border border-border rounded-xl p-6"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Signaux Actifs</p>
-                <p className="text-2xl font-bold text-blue-400">{liveMetrics.activeSignals}</p>
+                <p className="text-sm text-muted-foreground mb-1">Signaux Actifs</p>
+                <p className="text-2xl font-bold text-primary">{liveMetrics.activeSignals}</p>
               </div>
-              <Clock className="w-8 h-8 text-blue-400" />
+              <Clock className="w-8 h-8 text-primary" />
             </div>
           </motion.div>
 
@@ -319,11 +319,11 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-6"
+            className="bg-card text-card-foreground border border-border rounded-xl p-6"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Taux Réussite</p>
+                <p className="text-sm text-muted-foreground mb-1">Taux Réussite</p>
                 <p className="text-2xl font-bold text-green-400">{liveMetrics.winRate.toFixed(1)}%</p>
               </div>
               <Target className="w-8 h-8 text-green-400" />
@@ -334,11 +334,11 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-6"
+            className="bg-card text-card-foreground border border-border rounded-xl p-6"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Profit Aujourd'hui</p>
+                <p className="text-sm text-muted-foreground mb-1">Profit Aujourd'hui</p>
                 <p className="text-2xl font-bold text-green-400">${liveMetrics.todayProfit.toFixed(2)}</p>
               </div>
               <DollarSign className="w-8 h-8 text-green-400" />
@@ -349,11 +349,11 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-6"
+            className="bg-card text-card-foreground border border-border rounded-xl p-6"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Temps Moyen</p>
+                <p className="text-sm text-muted-foreground mb-1">Temps Moyen</p>
                 <p className="text-2xl font-bold text-yellow-400">{liveMetrics.avgResponseTime.toFixed(0)}s</p>
               </div>
               <Clock className="w-8 h-8 text-yellow-400" />
@@ -364,16 +364,16 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Technical Analysis avec gauge animé */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+            <div className="bg-card text-card-foreground rounded-xl p-6 shadow-lg border border-border">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                   <div className="flex items-center space-x-1">
-                    <TrendingUp className="w-4 h-4 text-blue-400" />
+                    <TrendingUp className="w-4 h-4 text-primary" />
                     {gaugeValue >= 85 && <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />}
                   </div>
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900">Analyse WVRS + IA</h2>
+                  <h2 className="text-xl font-semibold text-foreground">Analyse WVRS + IA</h2>
                   {gaugeValue >= 85 && (
                     <p className="text-xs text-green-600">🎯 Stratégie WVRS - Mèche institutionnelle active</p>
                   )}
@@ -386,23 +386,23 @@ export default function DashboardPage() {
             </div>
 
             {/* Asset Realtime */}
-            <div className="mt-6 bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+            <div className="mt-6 bg-card text-card-foreground rounded-xl p-6 shadow-lg border border-border">
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-gray-500 text-sm mb-2">Actif Principal</h3>
-                  <div className="text-2xl font-bold text-gray-900 mb-2">EUR/USD</div>
-                  <div className="text-gray-500 text-sm mb-4">Stratégie</div>
+                  <h3 className="text-muted-foreground text-sm mb-2">Actif Principal</h3>
+                  <div className="text-2xl font-bold text-foreground mb-2">EUR/USD</div>
+                  <div className="text-muted-foreground text-sm mb-4">Stratégie</div>
                   <div className="text-lg text-green-600">
                     {gaugeValue >= 85 ? 'WVRS Active' : gaugeValue > 60 ? 'IA Standard' : 'Attente Signal'}
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-gray-500 text-sm mb-2">Heure Système</h3>
-                  <div className="text-2xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-muted-foreground text-sm mb-2">Heure Système</h3>
+                  <div className="text-2xl font-bold text-foreground mb-2">
                     {currentTime.toLocaleTimeString('fr-FR')}
                   </div>
-                  <div className="text-gray-500 text-sm mb-4">Prochaine Analyse</div>
-                  <div className="text-lg text-gray-900">
+                  <div className="text-muted-foreground text-sm mb-4">Prochaine Analyse</div>
+                  <div className="text-lg text-foreground">
                     {Math.floor((60 - currentTime.getSeconds()) / 10) * 10}s
                   </div>
                 </div>
@@ -412,12 +412,12 @@ export default function DashboardPage() {
 
           {/* History Panel avec signaux temps réel */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+            <div className="bg-card text-card-foreground rounded-xl p-6 shadow-lg border border-border">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Signaux Récents</h2>
+                <h2 className="text-xl font-semibold text-foreground">Signaux Récents</h2>
                 <button 
                   onClick={() => window.location.href = '/signals'}
-                  className="text-blue-600 hover:text-blue-700 text-sm"
+                  className="text-primary hover:text-primary/80 text-sm"
                 >
                   Voir tout
                 </button>
@@ -430,7 +430,7 @@ export default function DashboardPage() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-gray-50 rounded-lg p-4 border border-gray-100"
+                    className="bg-muted/50 rounded-lg p-4 border border-border"
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-2">
@@ -456,21 +456,22 @@ export default function DashboardPage() {
                         </span>
                       </div>
                       <div className="text-gray-500 text-xs">
+                      <div className="text-muted-foreground text-xs">
                         {signal.timestamp.toLocaleTimeString('fr-FR')}
                       </div>
                     </div>
                     
-                    <div className="text-gray-900 font-medium mb-2">{signal.pair}</div>
+                    <div className="text-foreground font-medium mb-2">{signal.pair}</div>
                     
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500 text-sm">Confiance</span>
-                      <span className="text-gray-900 text-sm">{signal.confidence}%</span>
+                      <span className="text-muted-foreground text-sm">Confiance</span>
+                      <span className="text-foreground text-sm">{signal.confidence}%</span>
                     </div>
                     
                     <div className="mt-2">
-                      <div className="w-full bg-gray-200 rounded-full h-1">
+                      <div className="w-full bg-muted rounded-full h-1">
                         <div 
-                          className="bg-blue-600 h-1 rounded-full transition-all duration-300"
+                          className="bg-primary h-1 rounded-full transition-all duration-300"
                           style={{ width: `${signal.confidence}%` }}
                         ></div>
                       </div>
@@ -488,11 +489,11 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="fixed bottom-6 right-6 w-80 bg-card border border-border rounded-xl shadow-2xl z-50"
+          className="fixed bottom-6 right-6 w-80 bg-card text-card-foreground border border-border rounded-xl shadow-2xl z-50"
         >
           <div className="flex items-center justify-between p-4 border-b border-border">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                 <MessageCircle className="w-4 h-4 text-white" />
               </div>
               <span className="text-foreground font-medium">Assistant IA</span>
@@ -508,7 +509,7 @@ export default function DashboardPage() {
             <div className="text-muted-foreground text-sm mb-4">
               Bonjour ! Comment puis-je vous aider avec votre trading aujourd'hui ?
             </div>
-            <div className="bg-secondary p-3 rounded-lg text-sm text-foreground mb-4">
+            <div className="bg-muted p-3 rounded-lg text-sm text-foreground mb-4">
               Vos performances sont excellentes aujourd'hui avec un taux de réussite de {liveMetrics.winRate.toFixed(1)}% !
             </div>
           </div>
@@ -516,7 +517,7 @@ export default function DashboardPage() {
             <input
               type="text"
               placeholder="Tapez votre message..."
-              className="w-full bg-input text-foreground px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-background border border-border text-foreground px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
         </motion.div>
@@ -528,7 +529,7 @@ export default function DashboardPage() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           onClick={() => setShowChat(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center shadow-lg z-50 transition-colors"
+          className="fixed bottom-6 right-6 w-14 h-14 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center shadow-lg z-50 transition-colors"
         >
           <MessageCircle className="w-6 h-6 text-white" />
         </motion.button>
