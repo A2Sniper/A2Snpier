@@ -71,5 +71,4 @@ export function TradingViewChart({ isOpen, onClose, symbol }: TradingViewChartPr
       </div>
     </div>
   );
-  );
 }
