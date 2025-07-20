@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Clock, BarChart3, Target } from 'lucide-react';
+import { Copy, TrendingUp, TrendingDown, Clock, BarChart3, CheckCircle, Zap } from 'lucide-react';
 import { WVRSIndicator } from './wvrs-indicator';
 import { Signal } from '@/lib/mock-data';
 import { TradingViewChart } from './tradingview-chart';
